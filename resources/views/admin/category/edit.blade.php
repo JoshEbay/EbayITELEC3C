@@ -1,31 +1,64 @@
 <x-app-layout>
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            {{ __('Dashboard') }}
+            Welcome to {{ __('Category') }}, {{Auth::user()->name}}
         </h2>
     </x-slot>
 
     <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
 
-            <div class="col-md-4">
-                <div class="card p-3">
-                    <form action="{{ url('/edit_category_confirm', $category->id) }}" method="POST">
-                        @csrf
-                        <div class="mb-3">
-                            <h3>Edit {{ $category->cat_name }}</h3>
-                            <label for="cat_name">Category Name</label>
-                            <input type="text" class="form-control" name="cat_name"
-                                placeholder="Enter category name" value="{{$category->cat_name}}">
+            <div class="container">
+                <div class="row">
+
+                    <div class="col-md-8">
+
+                        @if(session('success'))
+                            <div class="alert alert-success alert-dismissable fade show" role="alert">
+                                {{session('success')}}
+                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                            </div>
+                        @endif
+
+                        <div class="card">
+                            <div class="card-body table-responsive">
+
+                                <form action="{{ url('/category/update/'.$categories->id) }}" method="POST" enctype="multipart/form-data">
+                                    @csrf
+                                    <div class="mb-3 container">
+                                        <label for="inputCategory" class="col-form-label">Category Name</label>
+                                        <div class="mb-3">
+                                            <input type="text" class="form-control" name="category_name" value="{{ $categories->category_name }}" required onchange="enableUpdate()">
+                                            @error('category_name')
+                                                <span class="text-danger">{{$message}}</span>
+                                            @enderror
+                                        </div>
+
+                                        <label for="inputCategory" class="col-form-label">Category Icon</label>
+                                        <img src="{{ asset('storage/category_images/' . $categories->category_icon) }}" class="d-block w-50 mb-3" alt="{{$categories->category_name}}">
+
+                                        <div class="d-flex align-items-center mb-3">
+                                            <input type="file" class="form-control" name="category_icon" id="category_icon" onchange="enableUpdateFront(this)"style="width: 108px;">
+
+                                            <input type="text" class="form-control text-center fst-italic" name="category_icon_display" id="category_icon_display" aria-label="Username" aria-describedby="addon-wrapping" value="{{ $categories->category_icon }}" readonly style="width: 50%;"/>
+
+                                            {{-- <img src="{{ asset('storage/product_images/' . $categories->category_icon) }}"> --}}
+
+                                            @error('category_icon')
+                                                <span class="text-danger">{{$message}}</span>
+                                            @enderror
+                                        </div>
+
+                                        <div class="col-auto">
+                                            <button type="submit" class="btn btn-primary" id="updateBtn" disabled>Update Category</button>
+                                        </div>
+                                    </div>
+                                </form>
+
+                            </div>
                         </div>
-                        <div class="mb-3">
-                            <label for="user_id">User ID</label>
-                            <input type="number" class="form-control" name="user_id" placeholder="Enter User ID"
-                                min="1" value="{{$category->user_id}}">
-                        </div>
-                        <button type="submit" class="btn btn-primary" name="submit">Submit</button>
-                        <a href="{{route('AllCat')}}" class="btn btn-secondary">Back</a>
-                    </form>
+                    </div>
+
                 </div>
             </div>
 
